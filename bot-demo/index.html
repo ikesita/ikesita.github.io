@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ヘアサロン Lumière（ルミエール）｜よくある質問チャットボット デモ</title>
+<style>
+  :root{
+    --ink:#3b332c; --sub:#7a6f63; --line:#e7ded2; --bg:#faf7f2; --card:#ffffff;
+    --accent:#b08968; --accent-dark:#8a6a4e; --chat-bg:#f4eee6; --bot:#ffffff; --user:#b08968;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP",sans-serif; color:var(--ink); background:var(--bg); line-height:1.7;}
+  header{background:var(--card); border-bottom:1px solid var(--line); padding:18px 24px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;}
+  header .logo{font-size:22px; letter-spacing:.12em; font-weight:700;}
+  header .logo span{color:var(--accent); font-size:13px; letter-spacing:.2em; display:block; font-weight:400;}
+  header nav{font-size:13px; color:var(--sub); display:flex; gap:18px; flex-wrap:wrap;}
+  .hero{padding:44px 24px 30px; text-align:center; background:linear-gradient(180deg,#f3ead9, var(--bg));}
+  .hero h1{font-size:26px; letter-spacing:.06em; margin-bottom:10px;}
+  .hero p{color:var(--sub); font-size:14px; max-width:640px; margin:0 auto;}
+  .demo-badge{display:inline-block; margin-top:14px; background:var(--accent); color:#fff; font-size:12px; padding:4px 14px; border-radius:999px; letter-spacing:.08em;}
+  main{max-width:880px; margin:0 auto; padding:24px 16px 60px; display:grid; grid-template-columns:1fr 1fr; gap:20px;}
+  @media (max-width:760px){ main{grid-template-columns:1fr;} }
+  .card{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:22px;}
+  .card h2{font-size:16px; letter-spacing:.08em; border-bottom:2px solid var(--accent); display:inline-block; padding-bottom:4px; margin-bottom:14px;}
+  .card table{width:100%; border-collapse:collapse; font-size:14px;}
+  .card table td{padding:7px 4px; border-bottom:1px dashed var(--line);}
+  .card table td:last-child{text-align:right; white-space:nowrap; font-weight:600;}
+  .card dl{font-size:14px;}
+  .card dt{font-weight:700; margin-top:10px;}
+  .card dd{color:var(--sub); margin-left:0;}
+  /* チャット */
+  .chat-card{grid-column:1 / -1; padding:0; overflow:hidden;}
+  .chat-head{background:var(--accent); color:#fff; padding:14px 20px; display:flex; justify-content:space-between; align-items:center;}
+  .chat-head .t{font-weight:700; letter-spacing:.05em;}
+  .chat-head .s{font-size:12px; opacity:.9;}
+  .chat-body{background:var(--chat-bg); height:380px; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:10px;}
+  .msg{max-width:82%; padding:10px 14px; border-radius:16px; font-size:14px; white-space:pre-wrap; word-break:break-word;}
+  .msg.bot{background:var(--bot); align-self:flex-start; border-bottom-left-radius:4px; box-shadow:0 1px 2px rgba(0,0,0,.06);}
+  .msg.user{background:var(--user); color:#fff; align-self:flex-end; border-bottom-right-radius:4px;}
+  .chips{padding:10px 14px 4px; background:var(--chat-bg); display:flex; flex-wrap:wrap; gap:8px;}
+  .chip{border:1px solid var(--accent); color:var(--accent-dark); background:#fff; border-radius:999px; padding:5px 12px; font-size:12.5px; cursor:pointer;}
+  .chip:hover{background:var(--accent); color:#fff;}
+  .chat-input{display:flex; gap:8px; padding:12px; background:#fff; border-top:1px solid var(--line);}
+  .chat-input input{flex:1; border:1px solid var(--line); border-radius:10px; padding:10px 12px; font-size:14px;}
+  .chat-input button{background:var(--accent); color:#fff; border:none; border-radius:10px; padding:10px 20px; font-size:14px; cursor:pointer;}
+  .chat-input button:hover{background:var(--accent-dark);}
+  .note{font-size:12px; color:var(--sub); padding:0 14px 12px; background:#fff;}
+  footer{text-align:center; color:var(--sub); font-size:12px; padding:24px;}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">Lumière<span>HAIR SALON</span></div>
+  <nav><span>メニュー・料金</span><span>アクセス</span><span>営業時間</span><span>ご予約</span></nav>
+</header>
+<section class="hero">
+  <h1>ヘアサロン Lumière（ルミエール）</h1>
+  <p>表参道の小さなヘアサロンです。このページは、店舗向けFAQチャットボットの<strong>動作デモ</strong>です。下のチャットに「営業時間は？」「カットの料金は？」などと入力すると、登録されたQ&Aの範囲で自動でお答えします。</p>
+  <div class="demo-badge">DEMO ― 架空の店舗のサンプルです</div>
+</section>
+<main>
+  <div class="card">
+    <h2>メニュー・料金</h2>
+    <table>
+      <tr><td>カット</td><td>¥4,800</td></tr>
+      <tr><td>カラー（全体）</td><td>¥7,700〜</td></tr>
+      <tr><td>パーマ</td><td>¥8,800〜</td></tr>
+      <tr><td>トリートメント</td><td>¥3,300〜</td></tr>
+      <tr><td>ヘッドスパ</td><td>¥4,400</td></tr>
+      <tr><td>縮毛矯正</td><td>¥16,500〜</td></tr>
+      <tr><td>キッズカット（小学生以下）</td><td>¥2,750</td></tr>
+      <tr><td>ヘアセット</td><td>¥5,500</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h2>店舗情報</h2>
+    <dl>
+      <dt>住所</dt><dd>東京都渋谷区神宮前4-12-3 ルミエールビル1F（架空の住所です）</dd>
+      <dt>営業時間</dt><dd>平日 10:00〜19:00／土日祝 9:00〜18:00</dd>
+      <dt>定休日</dt><dd>毎週火曜日・第3水曜日</dd>
+      <dt>電話</dt><dd>03-1234-5678（架空の番号です）</dd>
+    </dl>
+  </div>
+
+  <div class="card chat-card" id="chat">
+    <div class="chat-head">
+      <div class="t">よくある質問チャット</div>
+      <div class="s">自動応答デモ</div>
+    </div>
+    <div class="chat-body" id="chatBody"></div>
+    <div class="chips" id="chips"></div>
+    <form class="chat-input" id="chatForm">
+      <input type="text" id="chatText" placeholder="例：カットの料金はいくらですか？" autocomplete="off">
+      <button type="submit">送信</button>
+    </form>
+    <div class="note">※このデモは、登録したQ&amp;A（28件）に一致する質問にだけお答えします。範囲外の質問には、お問い合わせ先をご案内します（実際の納品物も同じ仕組みです）。</div>
+  </div>
+</main>
+<footer>Hair Salon Lumière ― チャットボット構築サービスのデモページ（掲載内容はすべて架空です）</footer>
+<script>
+// ===== FAQデータ（登録Q&A 28件） =====
+const FAQ = [
+ {k:["営業時間","何時から","何時まで","開店","閉店","最終受付"],a:"営業時間は、平日10:00〜19:00、土日祝9:00〜18:00です。最終受付はカットが閉店1時間前、カラー・パーマは閉店2時間前までとなります。"},
+ {k:["定休日","休み","休業日"],a:"定休日は毎週火曜日と第3水曜日です。祝日と重なる場合もお休みとなります。"},
+ {k:["予約方法","予約したい","予約する","どうやって予約","予約の仕方"],a:"ご予約は、お電話（03-1234-5678）または予約ページから承っております。ご希望のメニュー・日時・担当者の指名有無をお知らせください。"},
+ {k:["当日予約","今日空いて","今日行きたい","当日でも"],a:"当日のご予約も、空きがあれば承っております。直前ですとご希望の時間に添えない場合がありますので、お電話での確認が確実です（03-1234-5678）。"},
+ {k:["キャンセル","予約変更","変更したい","日時変更"],a:"ご予約の変更・キャンセルは、前日までにご連絡ください。当日キャンセルの場合は、メニュー料金の50%をキャンセル料として頂戴しております。"},
+ {k:["カット","カット料金","カットいくら"],a:"カットは¥4,800です（シャンプー・ブロー込み）。髪の長さによる追加料金はありません。"},
+ {k:["カラー","カラー料金","染めたい","全体染め"],a:"カラー（全体）は¥7,700〜です。髪の長さや使用する薬剤により変動します。リタッチのみの場合は¥5,500〜です。"},
+ {k:["パーマ","パーマ料金","かけたい"],a:"パーマは¥8,800〜です。デジタルパーマは¥13,200〜となります。髪の状態によっては施術をお断りする場合があります。"},
+ {k:["トリートメント","髪質改善"],a:"トリートメントは¥3,300〜ご用意しています。カットやカラーと組み合わせると¥1,100引きになります。"},
+ {k:["ヘッドスパ","スパ"],a:"ヘッドスパは¥4,400（30分）です。頭皮の状態に合わせてクレンジング剤をお選びいただけます。"},
+ {k:["縮毛矯正","ストレート"],a:"縮毛矯正は¥16,500〜です。所要時間は2時間半〜3時間が目安です。"},
+ {k:["キッズ","子供","子ども","小学生"],a:"キッズカット（小学生以下）は¥2,750です。中学生は¥3,850となります。保護者の方の同席も可能です。"},
+ {k:["ヘアセット","セット","アップスタイル","結婚式"],a:"ヘアセットは¥5,500です。早朝のご希望がある場合は、お電話でご相談ください。"},
+ {k:["所要時間","どれくらいかかる","時間はどのくらい","何時間"],a:"所要時間の目安は、カット約1時間、カット＋カラー約2時間、パーマ約2時間、縮毛矯正は2時間半〜3時間が目安です。"},
+ {k:["アクセス","場所","住所","どこにあります","最寄り駅","駅から"],a:"住所は東京都渋谷区神宮前4-12-3 ルミエールビル1Fです。表参道駅A2出口から徒歩3分です。"},
+ {k:["駐車場","車で","パーキング"],a:"専用駐車場はございません。近隣のコインパーキングをご利用ください。"},
+ {k:["支払い","クレジット","現金","paypay","電子マネー","カード使えます"],a:"お支払いは、現金・各種クレジットカード・交通系IC・PayPayがご利用いただけます。"},
+ {k:["初めて","はじめて","初来店","新規"],a:"初めてのお客様は、カウンセリングのお時間を長めにお取りしています。ご希望のイメージ写真などがありましたらお持ちください。新規のお客様向けに、全メニュー10%オフの特典もございます。"},
+ {k:["指名","担当者","スタイリスト"],a:"スタイリストのご指名が可能です。指名料は¥550です。ご予約時にお名前をお知らせください。"},
+ {k:["メンズ","男性","男"],a:"男性のお客様も歓迎しております。メンズカットも¥4,800です。"},
+ {k:["白髪","白髪染め","グレイカラー"],a:"白髪染め（グレイカラー）は¥6,600〜です。全体染めとリタッチがございます。"},
+ {k:["シャンプーを買","商品","物販","ホームケア"],a:"店内で使用しているシャンプー・トリートメントはご購入いただけます。価格は商品により異なりますので、スタッフにお声がけください。"},
+ {k:["遅刻","遅れそう","遅れる"],a:"ご予約時間に遅れそうな場合は、お電話でご連絡ください。15分以上の遅刻の場合、メニューの変更や当日の施術をお断りすることがあります。"},
+ {k:["子連れ","子供連れ","ベビーカー"],a:"お子様連れでのご来店も可能です。ベビーカーのままお席にご案内できます。"},
+ {k:["車椅子","バリアフリー","足が不自由"],a:"入口に段差がなく、車椅子でもご入店いただけます。お手伝いが必要な場合は、ご予約時にお知らせください。"},
+ {k:["電話番号","電話","連絡先","問い合わせ"],a:"お問い合わせは、お電話 03-1234-5678 までお願いいたします（営業時間内）。このチャットでお答えできない内容は、お電話でスタッフが対応いたします。"},
+ {k:["クーポン","割引","特典","安くな"],a:"新規のお客様は全メニュー10%オフの特典がございます。再来のお客様には、次回予約の特典としてトリートメントのサービスがございます。"},
+ {k:["相談","悩み","似合う","おすすめメニュー","ダメージ"],a:"髪のお悩みや似合うメニューのご相談は、カウンセリングで承っております。ご予約のうえご来店ください。ダメージが気になる場合は、トリートメントとの組み合わせもご提案できます。具体的な診断はご来店時に行います。"}
+];
+const FALLBACK = "申し訳ありません、そのご質問にはこのチャットではお答えできません。お手数ですが、お電話（03-1234-5678）でスタッフにお問い合わせください。営業時間は平日10:00〜19:00、土日祝9:00〜18:00です。";
+
+function findAnswer(text){
+  const t = text.replace(/\s+/g,"").toLowerCase();
+  let best=null, bestScore=0;
+  for(const item of FAQ){
+    let score=0;
+    for(const kw of item.k){
+      if(t.includes(kw.replace(/\s+/g,"").toLowerCase())) score += kw.length;
+    }
+    if(score>bestScore){ bestScore=score; best=item.a; }
+  }
+  return bestScore>0 ? best : FALLBACK;
+}
+
+// ===== チャットUI =====
+const body = document.getElementById("chatBody");
+const chipsBox = document.getElementById("chips");
+const form = document.getElementById("chatForm");
+const input = document.getElementById("chatText");
+
+function addMsg(text, who){
+  const d = document.createElement("div");
+  d.className = "msg " + who;
+  d.textContent = text;
+  body.appendChild(d);
+  body.scrollTop = body.scrollHeight;
+}
+function ask(text){
+  if(!text.trim()) return;
+  addMsg(text, "user");
+  setTimeout(()=>addMsg(findAnswer(text), "bot"), 350);
+}
+const SUGGEST = ["営業時間は？","定休日はいつ？","予約方法を教えて","カットの料金は？","カラーの料金は？","駐車場はありますか？","支払い方法は？","初めてですが大丈夫ですか？"];
+for(const s of SUGGEST){
+  const b = document.createElement("button");
+  b.type="button"; b.className="chip"; b.textContent=s;
+  b.addEventListener("click", ()=>ask(s));
+  chipsBox.appendChild(b);
+}
+form.addEventListener("submit", e=>{
+  e.preventDefault();
+  ask(input.value);
+  input.value="";
+});
+addMsg("こんにちは、ヘアサロン Lumièreです。営業時間・料金・ご予約など、よくあるご質問に自動でお答えします。下のボタンか、入力欄からご質問ください。", "bot");
+</script>
+</body>
+</html>
